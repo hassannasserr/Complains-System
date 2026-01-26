@@ -13,5 +13,29 @@ const createComplaint = asyncHandler(async (req, res) => {
   res.status(201).json(complaint);
 });
 
+const getAllComplaints = asyncHandler(async (req, res) => {
+  const complaints = await Complaint.find().populate('createdBy', 'name email');
+  res.json(complaints);
+});
 
-module.exports = { createComplaint };
+const getMyComplaints = asyncHandler(async (req, res) => {
+  const complaints = await Complaint.find({ createdBy: req.user._id });
+  res.json(complaints);
+});
+
+const updateComplaintStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+  const complaint = await Complaint.findById(req.params.id);
+
+  if (!complaint) {
+    res.status(404);
+    throw new Error('Complaint not found');
+  }
+
+  complaint.status = status;
+  await complaint.save();
+
+  res.json(complaint);
+});
+
+module.exports = { createComplaint, getAllComplaints, getMyComplaints, updateComplaintStatus };

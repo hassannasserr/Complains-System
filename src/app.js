@@ -12,6 +12,7 @@ const complaintRoutes = require('./routes/complaint.routes');
 const errorHandler = require('./middlewares/error.middleware');
 
 
+
 app.get('/health', (req, res) => {
     res.json({ status: 'OK' });
 });
