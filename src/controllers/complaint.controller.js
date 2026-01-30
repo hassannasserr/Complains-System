@@ -38,4 +38,25 @@ const updateComplaintStatus = asyncHandler(async (req, res) => {
   res.json(complaint);
 });
 
-module.exports = { createComplaint, getAllComplaints, getMyComplaints, updateComplaintStatus };
+const addComment = asyncHandler(async (req, res) => {
+  const { message } = req.body;
+
+  const complaint = await Complaint.findById(req.params.id);
+
+  if (!complaint) {
+    res.status(404);
+    throw new Error('Complaint not found');
+  }
+
+  complaint.comments.push({
+    message,
+    commentedBy: req.user._id
+  });
+
+  await complaint.save();
+
+  res.status(201).json(complaint);
+});
+
+
+module.exports = { createComplaint, getAllComplaints, getMyComplaints, updateComplaintStatus, addComment };
